@@ -6,9 +6,7 @@ use valute\JSONDataParser;
 ini_set('display_errors',1);
 error_reporting(E_ALL);
 
-require 'ValuteDynamic.php';
-require 'CBDataSource.php';
-require 'JSONDataParser.php';
+require '__autoload.php';
 
 $usdDynamic = new ValuteDynamic();
 $usdSource = new CBDataSource('R01235');
