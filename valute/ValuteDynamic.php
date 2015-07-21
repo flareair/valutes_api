@@ -20,7 +20,6 @@ class ValuteDynamic {
 
     if (is_string($dateRange) && in_array($dateRange, $this->savedRanges)) {
       $newRange = $this->presavedToRange($dateRange);
-
       $result = $this->dataSource->getInRange($newRange);
       return $this->parser->parse($result);
     }
@@ -47,7 +46,7 @@ class ValuteDynamic {
     $format = 'd/m/Y';
     $today = new \DateTime();
     $todayString = $today->format($format);
-    var_dump($todayString);
+    // var_dump($todayString);
     $range = Array();
     switch ($name) {
       case 'today':
@@ -60,11 +59,11 @@ class ValuteDynamic {
     return $range;
   }
 
-  public function setOutput(\interfaces\DataParser $dataParser) {
+  public function setOutput(\valute\interfaces\DataParser $dataParser) {
     $this->parser = $dataParser;
   }
 
-  public function setSource(\interfaces\DataSource $dataSource) {
+  public function setSource(\valute\interfaces\DataSource $dataSource) {
     $this->dataSource = $dataSource;
   }
 }

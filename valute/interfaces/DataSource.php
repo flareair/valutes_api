@@ -1,6 +1,6 @@
 <?php
 
-namespace interfaces;
+namespace valute\interfaces;
 
 interface DataSource {
   public function getInRange(array $range);

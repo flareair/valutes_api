@@ -1,22 +1,24 @@
 <?php
 use valute\ValuteDynamic;
 use valute\CBDataSource;
-use valute\JSONDataParser;
+use valute\PassThruDataParser;
 
 ini_set('display_errors',1);
 error_reporting(E_ALL);
 
-require '__autoload.php';
+$loader = require __DIR__ . '/vendor/autoload.php';
 
 $usdDynamic = new ValuteDynamic();
 $usdSource = new CBDataSource('R01235');
 
 $usdDynamic->setSource($usdSource);
-$usdDynamic->setOutput(new JSONDataParser());
+$usdDynamic->setOutput(new PassThruDataParser());
 
 $dataRange = ['10/07/2015','20/07/2015'];
-// echo $usdDynamic->checkDateRange($dataRange);
 
-// header('Content-type: application/json');
-echo $usdDynamic->getCourse($dataRange);
-// echo $usdDynamic->getCourse('today');
+echo "<pre>";
+$result = $usdDynamic->getCourse('today');
+var_dump($result);
+$result = $usdDynamic->getCourse($dataRange);
+var_dump($result);
+echo "</pre>";

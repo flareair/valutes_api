@@ -4,8 +4,8 @@ namespace valute;
 
 use valute\interfaces\DataParser;
 
-class JSONDataParser implements DataParser {
+class PassThruDataParser implements DataParser {
   public function parse(array $data) {
-    return json_encode($data);
+    return $data;
   }
 }

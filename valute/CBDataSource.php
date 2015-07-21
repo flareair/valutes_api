@@ -2,9 +2,7 @@
 
 namespace valute;
 
-require 'interfaces/DataSource.php';
-
-use interfaces\DataSource;
+use valute\interfaces\DataSource;
 
 class CBDataSource implements DataSource {
   private $apiURI = 'http://www.cbr.ru/scripts/XML_dynamic.asp';
@@ -15,14 +13,48 @@ class CBDataSource implements DataSource {
   }
 
   public function getInRange(array $range) {
+
     $fixedRange = $this->fixDateRange($range);
     $formedURL = sprintf('%s?date_req1=%s&date_req2=%s&VAL_NM_RQ=%s', $this->apiURI, $fixedRange[0], $fixedRange[1], $this->valuteCode);
     $xml = new \SimpleXMLElement($formedURL, null, true);
     if ($xml === false) {
       return false;
     }
-    // var_dump($xml);
-    return $this->serializeXML($xml);
+    $rawResults = $this->serializeXML($xml);
+    return $this->normalizeResults($rawResults, $range);
+  }
+
+  private function normalizeResults(array $results, array $initialRange) {
+    $dateFirst = \DateTime::createFromFormat('d/m/Y', $initialRange[0]);
+    $dateLast = \DateTime::createFromFormat('d/m/Y', $initialRange[1]);
+
+    $diff = $dateLast->diff($dateFirst);
+
+    $diff = $diff->d;
+
+    if ($diff === 0) {
+      $results[0]['date'] = $initialRange[0];
+      return $results;
+    }
+    if ($diff === count($results)) {
+      return $results;
+    }
+
+    $i = 0;
+    $fixedResults = array();
+    while ($i <= $diff) {
+      $fixedResults[$i]['date'] = $dateFirst->format('d/m/Y');
+      foreach ($results as $key => $chunk) {
+        if ($fixedResults[$i]['date'] === $chunk['date']) {
+          // var_dump($chunk);
+          $fixedResults[$i] = $chunk;
+        }
+      }
+      $dateFirst->modify('+1 day');
+      $i++;
+    };
+    // var_dump($fixedResults);
+    return $fixedResults;
   }
 
   private function serializeXML(\SimpleXMLElement $xml) {

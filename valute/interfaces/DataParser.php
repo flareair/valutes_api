@@ -1,6 +1,6 @@
 <?php
 
-namespace interfaces;
+namespace valute\interfaces;
 
 interface DataParser {
   public function parse(array $data);
