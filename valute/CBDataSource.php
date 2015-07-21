@@ -15,6 +15,7 @@ class CBDataSource implements DataSource {
   public function getInRange(array $range) {
 
     $fixedRange = $this->fixDateRange($range);
+    // var_dump($fixedRange);
     $formedURL = sprintf('%s?date_req1=%s&date_req2=%s&VAL_NM_RQ=%s', $this->apiURI, $fixedRange[0], $fixedRange[1], $this->valuteCode);
     $xml = new \SimpleXMLElement($formedURL, null, true);
     if ($xml === false) {
@@ -27,7 +28,6 @@ class CBDataSource implements DataSource {
   private function normalizeResults(array $results, array $initialRange) {
     $dateFirst = \DateTime::createFromFormat('d/m/Y', $initialRange[0]);
     $dateLast = \DateTime::createFromFormat('d/m/Y', $initialRange[1]);
-
     $diff = $dateLast->diff($dateFirst);
 
     $diff = $diff->d;
@@ -36,23 +36,39 @@ class CBDataSource implements DataSource {
       $results[0]['date'] = $initialRange[0];
       return $results;
     }
-    if ($diff === count($results)) {
-      return $results;
-    }
+    // if ($diff === count($results)) {
+    //   return $results;
+    // }
 
     $i = 0;
     $fixedResults = array();
+
     while ($i <= $diff) {
       $fixedResults[$i]['date'] = $dateFirst->format('d/m/Y');
       foreach ($results as $key => $chunk) {
+        // var_dump($chunk);
         if ($fixedResults[$i]['date'] === $chunk['date']) {
-          // var_dump($chunk);
           $fixedResults[$i] = $chunk;
         }
       }
       $dateFirst->modify('+1 day');
       $i++;
     };
+
+    unset($chunk);
+
+    foreach ($fixedResults as $key => &$chunk) {
+      if (!isset($chunk['value'])) {
+        if (isset($fixedResults[$key - 1]['value'])) {
+          $chunk['nominal'] = $fixedResults[$key - 1]['nominal'];
+          $chunk['value'] = $fixedResults[$key - 1]['value'];
+        }
+        else if (isset($results[$key]['value'])) {
+          $chunk['nominal'] = $results[$key]['nominal'];
+          $chunk['value'] = $results[$key]['value'];
+        }
+      }
+    }
     // var_dump($fixedResults);
     return $fixedResults;
   }
@@ -60,7 +76,7 @@ class CBDataSource implements DataSource {
   private function serializeXML(\SimpleXMLElement $xml) {
     foreach ($xml->children() as $child) {
       $result[] = array(
-        'date' => $child['Date']->__toString(),
+        'date' => str_replace('.', '/', $child['Date']->__toString()),
         'nominal' => $child->Nominal->__toString(),
         'value' => $child->Value->__toString()
       );
@@ -77,7 +93,6 @@ class CBDataSource implements DataSource {
       if ($dateObj->format('D') === 'Mon') {
         $dateObj->modify('-2 day');
       }
-      // var_dump($dateObj->format('D'));
       $date = $dateObj->format($format);
     }
     return $range;

@@ -8,17 +8,23 @@ error_reporting(E_ALL);
 
 $loader = require __DIR__ . '/vendor/autoload.php';
 
+$dollarCode = 'R01235';
+$euroCode = 'R01239';
+
 $usdDynamic = new ValuteDynamic();
 $usdSource = new CBDataSource('R01235');
 
 $usdDynamic->setSource($usdSource);
 $usdDynamic->setOutput(new PassThruDataParser());
 
-$dataRange = ['10/07/2015','20/07/2015'];
+$dataRange = ['28/06/2015','09/07/2015'];
 
 echo "<pre>";
-$result = $usdDynamic->getCourse('today');
-var_dump($result);
-$result = $usdDynamic->getCourse($dataRange);
+// $result = $usdDynamic->getCourse('today');
+// var_dump($result);
+// $result = $usdDynamic->getCourse($dataRange);
+// var_dump($result);
+
+$result = $usdDynamic->getCourse('3 months');
 var_dump($result);
 echo "</pre>";
