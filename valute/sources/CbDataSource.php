@@ -1,21 +1,28 @@
 <?php
 
-namespace valute;
+namespace valute\sources;
 
 use valute\interfaces\DataSource;
 
-class CBDataSource implements DataSource {
+class CbDataSource implements DataSource {
   private $apiURI = 'http://www.cbr.ru/scripts/XML_dynamic.asp';
   private $valuteCode;
-
-  public function __construct($valuteCode) {
-    $this->valuteCode = $valuteCode;
+  private $valuteCodesArray = [
+    'usd' => 'R01235',
+    'eur' => 'R01239',
+    'gbp' => 'R01035',
+    'uah' => 'R01720'
+  ];
+  public function __construct($valuteName) {
+    $this->valuteName = $valuteName;
+    $this->valuteCode = $this->getValuteCode($valuteName);
   }
 
   public function getInRange(array $range) {
-
+    if (!$this->valuteCode) {
+      return false;
+    }
     $fixedRange = $this->fixDateRange($range);
-    // var_dump($fixedRange);
     $formedURL = sprintf('%s?date_req1=%s&date_req2=%s&VAL_NM_RQ=%s', $this->apiURI, $fixedRange[0], $fixedRange[1], $this->valuteCode);
     $xml = new \SimpleXMLElement($formedURL, null, true);
     if ($xml === false) {
@@ -23,6 +30,13 @@ class CBDataSource implements DataSource {
     }
     $rawResults = $this->serializeXML($xml);
     return $this->normalizeResults($rawResults, $range);
+  }
+
+  private function getValuteCode($valuteName) {
+    if (!array_key_exists($valuteName, $this->valuteCodesArray)) {
+      return false;
+    }
+    return $this->valuteCodesArray[$valuteName];
   }
 
   private function normalizeResults(array $results, array $initialRange) {

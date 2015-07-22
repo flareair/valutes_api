@@ -1,8 +1,8 @@
 <?php
 
 use valute\ValuteDynamic;
-use valute\CBDataSource;
-use valute\PassThruDataParser;
+use valute\sources\CbDataSource;
+use valute\parsers\SimpleDataParser;
 
 
 ini_set('display_errors',1);
@@ -15,8 +15,8 @@ class ValuteDynamicTest extends PHPUnit_Framework_TestCase{
 
   protected function setUp() {
     $this->valute = new ValuteDynamic();
-    $this->valute->setSource(new CBDataSource('R01235'));
-    $this->valute->setOutput(new PassThruDataParser());
+    $this->valute->setSource(new CBDataSource('usd'));
+    $this->valute->setOutput(new SimpleDataParser());
   }
 
   public function it_should_create_valuete_class() {

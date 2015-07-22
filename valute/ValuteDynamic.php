@@ -7,7 +7,7 @@ class ValuteDynamic {
   private $savedRanges = ['today', 'week', 'month', '3months', 'halfyear', 'year'];
   private $datePattern = '/^\d{2}\/\d{2}\/\d{4}$/';
   private $dataSource;
-  private $parser;
+  public $parser;
 
   public function __construct() {
   }
