@@ -33,10 +33,7 @@ class CbDataSource implements DataSource {
   }
 
   private function getValuteCode($valuteName) {
-    if (!array_key_exists($valuteName, $this->valuteCodesArray)) {
-      return false;
-    }
-    return $this->valuteCodesArray[$valuteName];
+    return isset($this->valuteCodesArray[$valuteName]) ? $this->valuteCodesArray[$valuteName] : false;
   }
 
   private function normalizeResults(array $results, array $initialRange) {
