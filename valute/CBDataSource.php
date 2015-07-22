@@ -69,7 +69,6 @@ class CBDataSource implements DataSource {
         }
       }
     }
-    // var_dump($fixedResults);
     return $fixedResults;
   }
 
@@ -83,6 +82,7 @@ class CBDataSource implements DataSource {
     }
     return $result;
   }
+
   private function fixDateRange(array $range) {
     $format = 'd/m/Y';
     foreach ($range as $key => &$date) {

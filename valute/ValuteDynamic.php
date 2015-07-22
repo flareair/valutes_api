@@ -4,7 +4,7 @@ namespace valute;
 
 class ValuteDynamic {
   private $valuteCode;
-  private $savedRanges = ['today', 'week', 'month', '3 months', 'halfyear', 'year'];
+  private $savedRanges = ['today', 'week', 'month', '3months', 'halfyear', 'year'];
   private $datePattern = '/^\d{2}\/\d{2}\/\d{4}$/';
   private $dataSource;
   private $parser;
@@ -58,7 +58,7 @@ class ValuteDynamic {
       case 'month':
         $range = [$today->modify('-1 month')->format($format), $todayString];
         break;
-      case '3 months':
+      case '3months':
         $range = [$today->modify('-3 month')->format($format), $todayString];
         break;
       case 'halfyear':

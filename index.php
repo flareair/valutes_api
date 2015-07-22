@@ -20,11 +20,7 @@ $usdDynamic->setOutput(new PassThruDataParser());
 $dataRange = ['28/06/2015','09/07/2015'];
 
 echo "<pre>";
-// $result = $usdDynamic->getCourse('today');
-// var_dump($result);
-// $result = $usdDynamic->getCourse($dataRange);
-// var_dump($result);
 
-$result = $usdDynamic->getCourse('3 months');
+$result = $usdDynamic->getCourse('3months');
 var_dump($result);
 echo "</pre>";
