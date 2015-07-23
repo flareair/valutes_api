@@ -23,6 +23,9 @@ class Api {
     }
 
     $this->setDataParser($parsedUri[2]);
+    if (!isset($get['valute']) || empty($get['valute'])) {
+      $this->send404();
+    }
     $this->setDataSource($parsedUri[1], $get['valute']);
 
     $result = $this->valute->getCourse($this->makeRange($get));
