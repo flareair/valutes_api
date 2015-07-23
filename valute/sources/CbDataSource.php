@@ -47,9 +47,6 @@ class CbDataSource implements DataSource {
       $results[0]['date'] = $initialRange[0];
       return $results;
     }
-    // if ($diff === count($results)) {
-    //   return $results;
-    // }
 
     $i = 0;
     $fixedResults = array();

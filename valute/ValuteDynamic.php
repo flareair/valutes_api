@@ -46,7 +46,6 @@ class ValuteDynamic {
     $format = 'd/m/Y';
     $today = new \DateTime();
     $todayString = $today->format($format);
-    // var_dump($todayString);
     $range = Array();
     switch ($name) {
       case 'today':
