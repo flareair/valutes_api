@@ -2,6 +2,8 @@
 
 namespace valute;
 
+use valute\exceptions\ValuteException;
+
 class ValuteDynamic {
   private $valuteCode;
   private $savedRanges = ['today', 'week', 'month', '3months', 'halfyear', 'year'];
@@ -12,10 +14,10 @@ class ValuteDynamic {
   public function __construct() {
   }
 
+  // need to refactor after tests
   public function getCourse($dateRange) {
-
     if (!isset($dateRange) || empty($dateRange)) {
-      return false;
+      throw new ValuteException("Wrong date range", 1);
     }
 
     if (is_string($dateRange) && in_array($dateRange, $this->savedRanges)) {
@@ -24,18 +26,20 @@ class ValuteDynamic {
       return $this->parser->parse($result);
     }
     elseif (is_array($dateRange) && count($dateRange) === 2 && $this->checkDateRange($dateRange)) {
-
-      $result = $this->dataSource->getInRange($dateRange);
-      return $this->parser->parse($result);
+        $result = $this->dataSource->getInRange($dateRange);
+        return $this->parser->parse($result);
     }
     else {
-      return false;
+      throw new ValuteException("Wrong date range", 1);
+      // return false;
     }
+
   }
 
   private function checkDateRange(array $dateRange) {
     foreach ($dateRange as $date) {
       if (!preg_match($this->datePattern, $date)) {
+        throw new ValuteException("Wrong date range", 1);
         return false;
       }
     }

@@ -3,6 +3,7 @@
 namespace valute;
 
 use valute\ValuteDynamic;
+use valute\exceptions\ValuteException;
 
 class Api {
   private $valute;
@@ -15,30 +16,35 @@ class Api {
   }
 
   public function route($method, $uri, array $get) {
-    list($method, $uri, $get) = $this->sanitizeInput($method, $uri, $get);
+    try {
+      list($method, $uri, $get) = $this->sanitizeInput($method, $uri, $get);
 
-    $parsedUri = $this->parseUri($uri);
-    if ($method !== 'GET' || count($parsedUri) !== 2) {
-      $this->send404();
+      $parsedUri = $this->parseUri($uri);
+      if ($method !== 'GET' || count($parsedUri) !== 2) {
+        throw new ValuteException("Wrong uri or request method", 2);
+      }
+
+      $this->setDataParser($parsedUri[2]);
+      if (!isset($get['valute']) || empty($get['valute'])) {
+        throw new ValuteException("You should define valute name", 2);
+      }
+      $this->setDataSource($parsedUri[1], $get['valute']);
+
+      $result = $this->valute->getCourse($this->makeRange($get));
+
+      if (!$result) {
+        throw new ValuteException("Something went wrong, empty results", 2);
+      }
+
+      $header = $this->valute->parser->getHeader();
+      if ($header) {
+        header($header);
+      }
+      echo $result;
     }
-
-    $this->setDataParser($parsedUri[2]);
-    if (!isset($get['valute']) || empty($get['valute'])) {
-      $this->send404();
+    catch(ValuteException $e) {
+      $this->sendError($e->getMessage());
     }
-    $this->setDataSource($parsedUri[1], $get['valute']);
-
-    $result = $this->valute->getCourse($this->makeRange($get));
-
-    if (!$result) {
-      $this->send404();
-    }
-
-    $header = $this->valute->parser->getHeader();
-    if ($header) {
-      header($header);
-    }
-    echo $result;
   }
 
   private function sanitizeInput($method, $uri, array $get) {
@@ -59,7 +65,7 @@ class Api {
       $this->valute->setOutput(new $className());
     }
     else {
-      $this->send404();
+      throw new ValuteException("Undefined data parser", 3);
     }
   }
 
@@ -69,13 +75,13 @@ class Api {
       $this->valute->setSource(new $className($valuteName));
     }
     else {
-      $this->send404();
+      throw new ValuteException("Undefined data source", 3);
     }
   }
 
   private function makeRange(array $get) {
     if (!isset($get['date1']) || empty($get['date1'])) {
-      $this->send404();
+      throw new ValuteException("Wrong date range", 1);
     }
     if (isset($get['date2']) && !empty($get['date2'])) {
       return [$get['date1'], $get['date2']];
@@ -83,8 +89,8 @@ class Api {
     return $get['date1'];
   }
 
-  private function send404() {
-    header("HTTP/1.0 404 Not Found");
-    die('false');
+  private function sendError($message = null) {
+    // header("HTTP/1.0 404 Not Found");
+    die($message);
   }
 }

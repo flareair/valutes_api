@@ -3,6 +3,7 @@
 namespace valute\sources;
 
 use valute\interfaces\DataSource;
+use valute\exceptions\ValuteException;
 
 class CbDataSource implements DataSource {
   private $apiURI = 'http://www.cbr.ru/scripts/XML_dynamic.asp';
@@ -20,13 +21,13 @@ class CbDataSource implements DataSource {
 
   public function getInRange(array $range) {
     if (!$this->valuteCode) {
-      return false;
+      throw new ValuteException("This valute not in supported list", 0);
     }
     $fixedRange = $this->fixDateRange($range);
     $formedURL = sprintf('%s?date_req1=%s&date_req2=%s&VAL_NM_RQ=%s', $this->apiURI, $fixedRange[0], $fixedRange[1], $this->valuteCode);
     $xml = new \SimpleXMLElement($formedURL, null, true);
     if ($xml === false) {
-      return false;
+      throw new ValuteException("Can't connect to CB api server", 0);
     }
     $rawResults = $this->serializeXML($xml);
     return $this->normalizeResults($rawResults, $range);
