@@ -1,6 +1,7 @@
 {
     "name": "yaroslav/valutes",
     "require-dev": {
+        "codeception/codeception": "*"
     },
     "license": "MIT",
     "authors": [
@@ -9,7 +10,8 @@
             "email": "flareair0@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+    },
     "autoload": {
         "psr-4": {
             "valute\\": "valute/"

@@ -1,3 +1,9 @@
 /vendor/
 composer.lock
 *.log
+tests/_output/*
+tests/_log/*
+tests/_temp/*
+tests/_support/*
+tests/_data/*
+tests/_envs/*
