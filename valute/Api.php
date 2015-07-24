@@ -41,9 +41,10 @@ class Api {
         header($header);
       }
       echo $result;
-    }
-    catch(ValuteException $e) {
+    } catch(ValuteException $e) {
       $this->sendError($e->getMessage());
+    } catch(\Exception $e) {
+      $this->sendError('Internal server error. Contact administrator.', 'HTTP/1.1 500 Internal Server Error');
     }
   }
 
@@ -89,8 +90,10 @@ class Api {
     return $get['date1'];
   }
 
-  private function sendError($message = null) {
-    // header("HTTP/1.0 404 Not Found");
+  private function sendError($message = null, $header = null) {
+    if ($header) {
+      header($header);
+    }
     die($message);
   }
 }
