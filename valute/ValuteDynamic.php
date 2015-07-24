@@ -37,11 +37,19 @@ class ValuteDynamic {
   }
 
   private function checkDateRange(array $dateRange) {
+    // can improve this, replace by array_walk
     foreach ($dateRange as $date) {
       if (!preg_match($this->datePattern, $date)) {
         throw new ValuteException("Wrong date range", 1);
         return false;
       }
+    }
+    $date1 = \DateTime::createFromFormat('d/m/Y', $dateRange[0]);
+    $date2 = \DateTime::createFromFormat('d/m/Y', $dateRange[1]);
+
+    if ($date2 < $date1) {
+      throw new ValuteException("Wrong date range", 1);
+      return false;
     }
     return true;
   }

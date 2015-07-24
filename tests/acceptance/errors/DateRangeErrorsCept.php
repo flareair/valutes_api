@@ -41,3 +41,11 @@ $I->see('Wrong date range');
 $I->amOnPage('/cb/json/?valute=usd&date1=01/02/2014&date2=1/3/14');
 $I->canSeeResponseCodeIs(200);
 $I->see('Wrong date range');
+
+$I->amOnPage('/cb/json/?valute=usd&date1=01/02/2015&date2=01/03/2014');
+$I->canSeeResponseCodeIs(200);
+$I->see('Wrong date range');
+
+$I->amOnPage('/cb/json/?valute=usd&date1=02/01/2015&date2=01/01/2015');
+$I->canSeeResponseCodeIs(200);
+$I->see('Wrong date range');
