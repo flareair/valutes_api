@@ -1,5 +1,5 @@
 <?php
-$I = new AcceptanceTester($scenario);
+$I = new ApiTester($scenario);
 $I->wantTo('see right error masseges then input wrong date range or presaved range');
 
 $urlList = [
@@ -19,7 +19,7 @@ $urlList = [
 
 
 foreach ($urlList as $key => $url) {
-  $I->amOnPage($url);
-  $I->canSeeResponseCodeIs(200);
-  $I->see('Wrong date range');
+  $I->sendGet($url);
+  $I->seeResponseCodeIs(200);
+  $I->seeResponseContains('Wrong date range');
 }
