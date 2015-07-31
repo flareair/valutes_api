@@ -1,7 +1,8 @@
 {
     "name": "yaroslav/valutes",
     "require-dev": {
-        "codeception/codeception": "*"
+        "codeception/codeception": "*",
+        "flow/jsonpath": "*"
     },
     "license": "MIT",
     "authors": [
